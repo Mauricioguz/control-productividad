@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Recolector {
+  id            String        @id @default(cuid())
+  nombre        String
+  documento     String?
+  activo        Boolean       @default(true)
+  recolecciones Recoleccion[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Lote {
+  id                   String                @id @default(cuid())
+  nombre               String
+  numeroArboles        Int
+  rendimientoTeorico   Float // Kg de pergamino seco / arbol
+  recolecciones        Recoleccion[]
+  procesosLavado       ProcesoLavado[]
+  procesosFermentacion ProcesoFermentacion[]
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+}
+
+model SalidaBodega {
+  id        String   @id @default(cuid())
+  fecha     DateTime
+  cantidad  Float
+  tipo      String // PERGAMINO_SECO, PASILLA
+  destino   String // VENTA_COOPERATIVA, TOSTION, OTRO
+  notas     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Recoleccion {
+  id           String     @id @default(cuid())
+  fecha        DateTime
+  pesoCereza   Float // Kg de cereza recolectada
+  recolectorId String
+  recolector   Recolector @relation(fields: [recolectorId], references: [id])
+  loteId       String
+  lote         Lote       @relation(fields: [loteId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model ProcesoLavado {
+  id                  String   @id @default(cuid())
+  fecha               DateTime
+  loteId              String
+  lote                Lote     @relation(fields: [loteId], references: [id])
+  pesoCerezaProcesada Float // Kg de cereza usados en este proceso
+  pesoCafeMojado      Float? // Kg final de cafe mojado
+  pesoPasillaMojada   Float?
+  pesoCafeSeco        Float? // Kg de cafe seco (marquesina)
+  pesoPasillaSeca     Float?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model ProcesoFermentacion {
+  id                String   @id @default(cuid())
+  fecha             DateTime
+  loteId            String
+  lote              Lote     @relation(fields: [loteId], references: [id])
+  pesoCerezaTotal   Float // Cereza seleccionada
+  diasFermentacion  Int
+  pesoCafeSeco      Float?
+  pesoFlotesSegunda Float? // Kg de flotes descartados procesados como cafe de segunda
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
