@@ -58,31 +58,67 @@ export default function BodegaPage() {
     });
   };
 
-  const formatDestino = (d: string) => d.replace(/_/g, ' ');
+  const formatDestino = (d: string) => {
+    switch (d) {
+      case 'VENTA_COOPERATIVA': return 'Venta a Cooperativa';
+      case 'TOSTION': return 'Salida para Tostión';
+      case 'OTRO': return 'Otro';
+      default: return d.replace(/_/g, ' ');
+    }
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <h1 className="page-title">Inventario de Bodega</h1>
 
       {/* Resumen de Existencias */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-        <div className="glass-card" style={{ textAlign: 'center' }}>
-          <h3 style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Café Pergamino Seco</h3>
-          <p style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--primary)', margin: 0 }}>
-            {(status?.pergaminoSeco ?? 0).toLocaleString()} <span style={{ fontSize: '1rem', fontWeight: 400 }}>kg</span>
-          </p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
-            {(status?.totales.entradasSeco ?? 0)} kg producidos — {(status?.totales.salidasSeco ?? 0)} kg salidas
-          </p>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ textAlign: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
+            <h3 style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Café Pergamino Seco</h3>
+            <p style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--primary)', margin: 0 }}>
+              {(status?.pergaminoSeco ?? 0).toLocaleString()} <span style={{ fontSize: '1rem', fontWeight: 400 }}>kg</span>
+            </p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+              {(status?.totales.entradasSeco ?? 0)} kg prod. — {(status?.totales.salidasSeco ?? 0)} kg sal.
+            </p>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-around', fontSize: '0.9rem' }}>
+            <div style={{ textAlign: 'center' }}>
+              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.8rem' }}>B. Lavado</span>
+              <strong style={{ fontSize: '1.1rem', color: 'var(--text-main)' }}>{(status?.pergaminoSecoLavado ?? 0).toLocaleString()} kg</strong>
+              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.7rem' }}>({(status?.totales.entradasSecoLavado ?? 0)} prod. - {(status?.totales.salidasSecoLavado ?? 0)} sal.)</span>
+            </div>
+            <div style={{ textAlign: 'center', borderLeft: '1px solid var(--border)', paddingLeft: '1.5rem' }}>
+              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.8rem' }}>B. Fermentado</span>
+              <strong style={{ fontSize: '1.1rem', color: '#ec4899' }}>{(status?.pergaminoSecoFermentado ?? 0).toLocaleString()} kg</strong>
+              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.7rem' }}>({(status?.totales.entradasSecoFermentado ?? 0)} prod. - {(status?.totales.salidasSecoFermentado ?? 0)} sal.)</span>
+            </div>
+          </div>
         </div>
-        <div className="glass-card" style={{ textAlign: 'center' }}>
-          <h3 style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Pasilla / Segunda</h3>
-          <p style={{ fontSize: '2.5rem', fontWeight: 800, color: '#f59e0b', margin: 0 }}>
-            {(status?.pasilla ?? 0).toLocaleString()} <span style={{ fontSize: '1rem', fontWeight: 400 }}>kg</span>
-          </p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
-            {(status?.totales.entradasPasilla ?? 0)} kg producidos — {(status?.totales.salidasPasilla ?? 0)} kg salidas
-          </p>
+        
+        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ textAlign: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
+            <h3 style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pasilla / Segunda</h3>
+            <p style={{ fontSize: '2.5rem', fontWeight: 800, color: '#f59e0b', margin: 0 }}>
+              {(status?.pasilla ?? 0).toLocaleString()} <span style={{ fontSize: '1rem', fontWeight: 400 }}>kg</span>
+            </p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+              {(status?.totales.entradasPasilla ?? 0)} kg prod. — {(status?.totales.salidasPasilla ?? 0)} kg sal.
+            </p>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-around', fontSize: '0.9rem' }}>
+            <div style={{ textAlign: 'center' }}>
+              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.8rem' }}>B. Lavado</span>
+              <strong style={{ fontSize: '1.1rem', color: 'var(--text-main)' }}>{(status?.pasillaLavado ?? 0).toLocaleString()} kg</strong>
+              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.7rem' }}>({(status?.totales.entradasPasillaLavado ?? 0)} prod. - {(status?.totales.salidasPasillaLavado ?? 0)} sal.)</span>
+            </div>
+            <div style={{ textAlign: 'center', borderLeft: '1px solid var(--border)', paddingLeft: '1.5rem' }}>
+              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.8rem' }}>B. Fermentado</span>
+              <strong style={{ fontSize: '1.1rem', color: '#6366f1' }}>{(status?.pasillaFermentado ?? 0).toLocaleString()} kg</strong>
+              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.7rem' }}>({(status?.totales.entradasPasillaFermentado ?? 0)} prod. - {(status?.totales.salidasPasillaFermentado ?? 0)} sal.)</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -100,6 +136,13 @@ export default function BodegaPage() {
               <select name="tipo" required>
                 <option value="PERGAMINO_SECO">Pergamino Seco</option>
                 <option value="PASILLA">Pasilla / Segunda</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Método de Beneficio</label>
+              <select name="metodoBeneficio" required>
+                <option value="LAVADO">Lavado</option>
+                <option value="FERMENTADO">Fermentado</option>
               </select>
             </div>
             <div className="form-group">
@@ -132,6 +175,7 @@ export default function BodegaPage() {
               <tr>
                 <th>Fecha</th>
                 <th>Tipo</th>
+                <th>Beneficio</th>
                 <th>Cantidad</th>
                 <th>Destino</th>
                 <th>Acciones</th>
@@ -142,6 +186,7 @@ export default function BodegaPage() {
                 <tr key={s.id}>
                   <td>{new Date(s.fecha).toLocaleDateString()}</td>
                   <td>{s.tipo === 'PERGAMINO_SECO' ? 'Pergamino Seco' : 'Pasilla'}</td>
+                  <td>{s.metodoBeneficio === 'FERMENTADO' ? 'Fermentado' : 'Lavado'}</td>
                   <td style={{ fontWeight: 700 }}>{s.cantidad} kg</td>
                   <td>{formatDestino(s.destino)}</td>
                   <td className="actions-cell">
@@ -152,7 +197,7 @@ export default function BodegaPage() {
               ))}
               {salidas.length === 0 && (
                 <tr>
-                  <td colSpan={5} style={{ textAlign: 'center', padding: '2rem' }}>No hay registros de salidas.</td>
+                  <td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>No hay registros de salidas.</td>
                 </tr>
               )}
             </tbody>
@@ -172,6 +217,13 @@ export default function BodegaPage() {
               <select name="tipo" required defaultValue={editingSalida.tipo}>
                 <option value="PERGAMINO_SECO">Pergamino Seco</option>
                 <option value="PASILLA">Pasilla / Segunda</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Método de Beneficio</label>
+              <select name="metodoBeneficio" required defaultValue={editingSalida.metodoBeneficio || 'LAVADO'}>
+                <option value="LAVADO">Lavado</option>
+                <option value="FERMENTADO">Fermentado</option>
               </select>
             </div>
             <div className="form-group">

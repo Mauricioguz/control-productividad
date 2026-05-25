@@ -49,18 +49,46 @@ export async function getBodegaStatus() {
   const entradaPasillaFermentado = procesosFermentacion.reduce((s, p) => s + (p.pesoFlotesSegunda ?? 0), 0)
   const totalEntradaPasilla = entradaPasillaLavado + entradaPasillaFermentado
 
-  // Salidas
-  const salidaSeco = salidas.filter(s => s.tipo === 'PERGAMINO_SECO').reduce((s, x) => s + x.cantidad, 0)
-  const salidaPasilla = salidas.filter(s => s.tipo === 'PASILLA').reduce((s, x) => s + x.cantidad, 0)
+  // Salidas por Método (Lavado por defecto para registros antiguos que no tengan metodoBeneficio)
+  const salidaSecoLavado = salidas
+    .filter(s => s.tipo === 'PERGAMINO_SECO' && (s.metodoBeneficio === 'LAVADO' || !s.metodoBeneficio))
+    .reduce((s, x) => s + x.cantidad, 0)
+  const salidaSecoFermentado = salidas
+    .filter(s => s.tipo === 'PERGAMINO_SECO' && s.metodoBeneficio === 'FERMENTADO')
+    .reduce((s, x) => s + x.cantidad, 0)
+
+  const salidaPasillaLavado = salidas
+    .filter(s => s.tipo === 'PASILLA' && (s.metodoBeneficio === 'LAVADO' || !s.metodoBeneficio))
+    .reduce((s, x) => s + x.cantidad, 0)
+  const salidaPasillaFermentado = salidas
+    .filter(s => s.tipo === 'PASILLA' && s.metodoBeneficio === 'FERMENTADO')
+    .reduce((s, x) => s + x.cantidad, 0)
+
+  const totalSalidaSeco = salidaSecoLavado + salidaSecoFermentado
+  const totalSalidaPasilla = salidaPasillaLavado + salidaPasillaFermentado
 
   return {
-    pergaminoSeco: totalEntradaSeco - salidaSeco,
-    pasilla: totalEntradaPasilla - salidaPasilla,
+    pergaminoSeco: totalEntradaSeco - totalSalidaSeco,
+    pasilla: totalEntradaPasilla - totalSalidaPasilla,
+    // Desglose de existencias por beneficio
+    pergaminoSecoLavado: entradaSecoLavado - salidaSecoLavado,
+    pergaminoSecoFermentado: entradaSecoFermentado - salidaSecoFermentado,
+    pasillaLavado: entradaPasillaLavado - salidaPasillaLavado,
+    pasillaFermentado: entradaPasillaFermentado - salidaPasillaFermentado,
     totales: {
       entradasSeco: totalEntradaSeco,
-      salidasSeco: salidaSeco,
+      salidasSeco: totalSalidaSeco,
       entradasPasilla: totalEntradaPasilla,
-      salidasPasilla: salidaPasilla
+      salidasPasilla: totalSalidaPasilla,
+      // Desglose para reporte
+      entradasSecoLavado: entradaSecoLavado,
+      salidasSecoLavado: salidaSecoLavado,
+      entradasSecoFermentado: entradaSecoFermentado,
+      salidasSecoFermentado: salidaSecoFermentado,
+      entradasPasillaLavado: entradaPasillaLavado,
+      salidasPasillaLavado: salidaPasillaLavado,
+      entradasPasillaFermentado: entradaPasillaFermentado,
+      salidasPasillaFermentado: salidaPasillaFermentado
     }
   }
 }

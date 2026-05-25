@@ -18,6 +18,7 @@ export async function createSalida(formData: FormData) {
   const fecha = new Date(formData.get('fecha') as string)
   const cantidad = parseFloat(formData.get('cantidad') as string)
   const tipo = formData.get('tipo') as string
+  const metodoBeneficio = formData.get('metodoBeneficio') as string
   const destino = formData.get('destino') as string
   const notas = formData.get('notas') as string
 
@@ -30,6 +31,7 @@ export async function createSalida(formData: FormData) {
       fecha,
       cantidad,
       tipo,
+      metodoBeneficio: metodoBeneficio || null,
       destino,
       notas: notas || null
     }
@@ -43,6 +45,7 @@ export async function updateSalida(id: string, formData: FormData) {
   const fecha = new Date(formData.get('fecha') as string)
   const cantidad = parseFloat(formData.get('cantidad') as string)
   const tipo = formData.get('tipo') as string
+  const metodoBeneficio = formData.get('metodoBeneficio') as string
   const destino = formData.get('destino') as string
   const notas = formData.get('notas') as string
 
@@ -56,6 +59,7 @@ export async function updateSalida(id: string, formData: FormData) {
       fecha,
       cantidad,
       tipo,
+      metodoBeneficio: metodoBeneficio || null,
       destino,
       notas: notas || null
     }

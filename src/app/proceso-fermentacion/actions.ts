@@ -22,6 +22,7 @@ export async function createProcesoFermentacion(formData: FormData) {
   const diasFermentacion = parseInt(formData.get('diasFermentacion') as string, 10)
   
   const readFloat = (val: string | null) => val && !isNaN(parseFloat(val)) ? parseFloat(val) : null;
+  const pesoCerezaSeleccionada = readFloat(formData.get('pesoCerezaSeleccionada') as string | null);
   const pesoCafeSeco = readFloat(formData.get('pesoCafeSeco') as string | null);
   const pesoFlotesSegunda = readFloat(formData.get('pesoFlotesSegunda') as string | null);
 
@@ -34,6 +35,7 @@ export async function createProcesoFermentacion(formData: FormData) {
       fecha,
       loteId,
       pesoCerezaTotal,
+      pesoCerezaSeleccionada,
       diasFermentacion,
       pesoCafeSeco,
       pesoFlotesSegunda
@@ -51,6 +53,7 @@ export async function updateProcesoFermentacion(id: string, formData: FormData) 
   const diasFermentacion = parseInt(formData.get('diasFermentacion') as string, 10)
   
   const readFloat = (val: string | null) => val && !isNaN(parseFloat(val)) ? parseFloat(val) : null;
+  const pesoCerezaSeleccionada = readFloat(formData.get('pesoCerezaSeleccionada') as string | null);
   const pesoCafeSeco = readFloat(formData.get('pesoCafeSeco') as string | null);
   const pesoFlotesSegunda = readFloat(formData.get('pesoFlotesSegunda') as string | null);
 
@@ -64,6 +67,7 @@ export async function updateProcesoFermentacion(id: string, formData: FormData) 
       fecha,
       loteId,
       pesoCerezaTotal,
+      pesoCerezaSeleccionada,
       diasFermentacion,
       pesoCafeSeco,
       pesoFlotesSegunda

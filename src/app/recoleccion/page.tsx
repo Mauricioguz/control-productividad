@@ -95,15 +95,15 @@ export default function RecoleccionPage() {
         </form>
       </div>
 
-      <div className="glass-card">
-        <table>
-          <thead>
+      <div className="glass-card" style={{ maxHeight: '400px', overflowY: 'auto', padding: '0 1.5rem 1.5rem 1.5rem' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead style={{ position: 'sticky', top: 0, backgroundColor: '#1e2129', zIndex: 1 }}>
             <tr>
-              <th>Fecha</th>
-              <th>Recolector</th>
-              <th>Lote</th>
-              <th>Cereza Recolectada</th>
-              <th>Acciones</th>
+              <th style={{ padding: '1rem 0.5rem' }}>Fecha</th>
+              <th style={{ padding: '1rem 0.5rem' }}>Recolector</th>
+              <th style={{ padding: '1rem 0.5rem' }}>Lote</th>
+              <th style={{ padding: '1rem 0.5rem' }}>Cereza Recolectada</th>
+              <th style={{ padding: '1rem 0.5rem' }}>Acciones</th>
             </tr>
           </thead>
           <tbody>

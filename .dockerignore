@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+*.md
+*.bat
+*.lnk
+.env*
+dev.db
+scratch
+project-temp
+npm-debug.log*
+.DS_Store

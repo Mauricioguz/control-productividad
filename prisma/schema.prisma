@@ -4,9 +4,11 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
   provider = "postgresql"
 }
+
 model Recolector {
   id            String        @id @default(cuid())
   nombre        String
@@ -30,14 +32,15 @@ model Lote {
 }
 
 model SalidaBodega {
-  id        String   @id @default(cuid())
-  fecha     DateTime
-  cantidad  Float
-  tipo      String // PERGAMINO_SECO, PASILLA
-  destino   String // VENTA_COOPERATIVA, TOSTION, OTRO
-  notas     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(cuid())
+  fecha           DateTime
+  cantidad        Float
+  tipo            String // PERGAMINO_SECO, PASILLA
+  metodoBeneficio String? // LAVADO, FERMENTADO
+  destino         String // VENTA_COOPERATIVA, TOSTION, OTRO
+  notas           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Recoleccion {
@@ -67,14 +70,15 @@ model ProcesoLavado {
 }
 
 model ProcesoFermentacion {
-  id                String   @id @default(cuid())
-  fecha             DateTime
-  loteId            String
-  lote              Lote     @relation(fields: [loteId], references: [id])
-  pesoCerezaTotal   Float // Cereza seleccionada
-  diasFermentacion  Int
-  pesoCafeSeco      Float?
-  pesoFlotesSegunda Float? // Kg de flotes descartados procesados como cafe de segunda
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                     String   @id @default(cuid())
+  fecha                  DateTime
+  loteId                 String
+  lote                   Lote     @relation(fields: [loteId], references: [id])
+  pesoCerezaTotal        Float // Cereza total procesada
+  pesoCerezaSeleccionada Float? // Cereza seleccionada
+  diasFermentacion       Int
+  pesoCafeSeco           Float?
+  pesoFlotesSegunda      Float? // Kg de flotes descartados procesados como cafe de segunda
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 }
