@@ -1,5 +1,10 @@
-import dotenv from 'dotenv';
-dotenv.config();
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const dotenv = require('dotenv');
+  dotenv.config();
+} catch (e) {
+  // Ignorar en producción (Render ya inyecta DATABASE_URL)
+}
 
 export default {
   schema: "prisma/schema.prisma",
@@ -10,4 +15,5 @@ export default {
     url: process.env.DATABASE_URL,
   },
 };
+
 
