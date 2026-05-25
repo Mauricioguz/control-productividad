@@ -99,7 +99,7 @@ export default function ProcesoFermentacionPage() {
               </select>
             </div>
             <div className="form-group" style={{ margin: 0 }}>
-              <label>Cereza Total Procesada</label>
+              <label>Cereza Seleccionada del Lote</label>
               <input 
                 name="pesoCerezaTotal" 
                 type="number" 
@@ -111,13 +111,13 @@ export default function ProcesoFermentacionPage() {
               />
             </div>
             <div className="form-group" style={{ margin: 0 }}>
-              <label>Cereza Seleccionada (1ra)</label>
+              <label>Cereza Excelsa Obtenida</label>
               <input 
                 name="pesoCerezaSeleccionada" 
                 type="number" 
                 step="0.1" 
                 required 
-                placeholder="Kg 1ra" 
+                placeholder="Kg excelsa" 
                 value={regPesoCerezaSeleccionada}
                 onChange={(e) => setRegPesoCerezaSeleccionada(e.target.value)}
               />
@@ -130,7 +130,7 @@ export default function ProcesoFermentacionPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px' }}>
             <div className="form-group" style={{ margin: 0 }}>
-              <label>Cereza de 2da (Diferencia)</label>
+              <label>Café de Segunda (Diferencia)</label>
               <input 
                 type="text" 
                 readOnly 
@@ -216,7 +216,7 @@ export default function ProcesoFermentacionPage() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
               <div className="form-group">
-                <label>Cereza Total</label>
+                <label>Cereza Seleccionada del Lote</label>
                 <input 
                   name="pesoCerezaTotal" 
                   type="number" 
@@ -227,7 +227,7 @@ export default function ProcesoFermentacionPage() {
                 />
               </div>
               <div className="form-group">
-                <label>Cereza Seleccionada</label>
+                <label>Cereza Excelsa Obtenida</label>
                 <input 
                   name="pesoCerezaSeleccionada" 
                   type="number" 
@@ -238,7 +238,7 @@ export default function ProcesoFermentacionPage() {
                 />
               </div>
               <div className="form-group">
-                <label>Cereza de 2da (Dif)</label>
+                <label>Café de Segunda (Diferencia)</label>
                 <input 
                   type="text" 
                   readOnly 

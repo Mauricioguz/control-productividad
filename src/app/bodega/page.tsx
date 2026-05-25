@@ -72,53 +72,49 @@ export default function BodegaPage() {
       <h1 className="page-title">Inventario de Bodega</h1>
 
       {/* Resumen de Existencias */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ textAlign: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
-            <h3 style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Café Pergamino Seco</h3>
-            <p style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--primary)', margin: 0 }}>
-              {(status?.pergaminoSeco ?? 0).toLocaleString()} <span style={{ fontSize: '1rem', fontWeight: 400 }}>kg</span>
-            </p>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
-              {(status?.totales.entradasSeco ?? 0)} kg prod. — {(status?.totales.salidasSeco ?? 0)} kg sal.
-            </p>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-around', fontSize: '0.9rem' }}>
-            <div style={{ textAlign: 'center' }}>
-              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.8rem' }}>B. Lavado</span>
-              <strong style={{ fontSize: '1.1rem', color: 'var(--text-main)' }}>{(status?.pergaminoSecoLavado ?? 0).toLocaleString()} kg</strong>
-              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.7rem' }}>({(status?.totales.entradasSecoLavado ?? 0)} prod. - {(status?.totales.salidasSecoLavado ?? 0)} sal.)</span>
-            </div>
-            <div style={{ textAlign: 'center', borderLeft: '1px solid var(--border)', paddingLeft: '1.5rem' }}>
-              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.8rem' }}>B. Fermentado</span>
-              <strong style={{ fontSize: '1.1rem', color: '#ec4899' }}>{(status?.pergaminoSecoFermentado ?? 0).toLocaleString()} kg</strong>
-              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.7rem' }}>({(status?.totales.entradasSecoFermentado ?? 0)} prod. - {(status?.totales.salidasSecoFermentado ?? 0)} sal.)</span>
-            </div>
-          </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+        {/* Café de Beneficio Lavado Seco */}
+        <div className="glass-card" style={{ textAlign: 'center', borderLeft: '4px solid var(--primary)', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '1.5rem' }}>
+          <h3 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Café Beneficio Lavado Seco</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--primary)', margin: 0 }}>
+            {(status?.pergaminoSecoLavado ?? 0).toLocaleString()} <span style={{ fontSize: '0.9rem', fontWeight: 400 }}>kg</span>
+          </p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.25rem' }}>
+            {(status?.totales.entradasSecoLavado ?? 0)} kg prod. — {(status?.totales.salidasSecoLavado ?? 0)} kg sal.
+          </p>
         </div>
-        
-        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ textAlign: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
-            <h3 style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pasilla / Segunda</h3>
-            <p style={{ fontSize: '2.5rem', fontWeight: 800, color: '#f59e0b', margin: 0 }}>
-              {(status?.pasilla ?? 0).toLocaleString()} <span style={{ fontSize: '1rem', fontWeight: 400 }}>kg</span>
-            </p>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
-              {(status?.totales.entradasPasilla ?? 0)} kg prod. — {(status?.totales.salidasPasilla ?? 0)} kg sal.
-            </p>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-around', fontSize: '0.9rem' }}>
-            <div style={{ textAlign: 'center' }}>
-              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.8rem' }}>B. Lavado</span>
-              <strong style={{ fontSize: '1.1rem', color: 'var(--text-main)' }}>{(status?.pasillaLavado ?? 0).toLocaleString()} kg</strong>
-              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.7rem' }}>({(status?.totales.entradasPasillaLavado ?? 0)} prod. - {(status?.totales.salidasPasillaLavado ?? 0)} sal.)</span>
-            </div>
-            <div style={{ textAlign: 'center', borderLeft: '1px solid var(--border)', paddingLeft: '1.5rem' }}>
-              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.8rem' }}>B. Fermentado</span>
-              <strong style={{ fontSize: '1.1rem', color: '#6366f1' }}>{(status?.pasillaFermentado ?? 0).toLocaleString()} kg</strong>
-              <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.7rem' }}>({(status?.totales.entradasPasillaFermentado ?? 0)} prod. - {(status?.totales.salidasPasillaFermentado ?? 0)} sal.)</span>
-            </div>
-          </div>
+
+        {/* Café de Beneficio Fermentado Seco */}
+        <div className="glass-card" style={{ textAlign: 'center', borderLeft: '4px solid #ec4899', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '1.5rem' }}>
+          <h3 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Café Beneficio Fermentado Seco</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 800, color: '#ec4899', margin: 0 }}>
+            {(status?.pergaminoSecoFermentado ?? 0).toLocaleString()} <span style={{ fontSize: '0.9rem', fontWeight: 400 }}>kg</span>
+          </p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.25rem' }}>
+            {(status?.totales.entradasSecoFermentado ?? 0)} kg prod. — {(status?.totales.salidasSecoFermentado ?? 0)} kg sal.
+          </p>
+        </div>
+
+        {/* Pasillas (B. Lavado) */}
+        <div className="glass-card" style={{ textAlign: 'center', borderLeft: '4px solid #f59e0b', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '1.5rem' }}>
+          <h3 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pasillas (B. Lavado)</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 800, color: '#f59e0b', margin: 0 }}>
+            {(status?.pasillaLavado ?? 0).toLocaleString()} <span style={{ fontSize: '0.9rem', fontWeight: 400 }}>kg</span>
+          </p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.25rem' }}>
+            {(status?.totales.entradasPasillaLavado ?? 0)} kg prod. — {(status?.totales.salidasPasillaLavado ?? 0)} kg sal.
+          </p>
+        </div>
+
+        {/* Café de Segunda (B. Fermentado) */}
+        <div className="glass-card" style={{ textAlign: 'center', borderLeft: '4px solid #6366f1', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '1.5rem' }}>
+          <h3 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Café de Segunda (B. Fermentado)</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 800, color: '#6366f1', margin: 0 }}>
+            {(status?.pasillaFermentado ?? 0).toLocaleString()} <span style={{ fontSize: '0.9rem', fontWeight: 400 }}>kg</span>
+          </p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.25rem' }}>
+            {(status?.totales.entradasPasillaFermentado ?? 0)} kg prod. — {(status?.totales.salidasPasillaFermentado ?? 0)} kg sal.
+          </p>
         </div>
       </div>
 
