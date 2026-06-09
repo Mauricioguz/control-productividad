@@ -61,7 +61,7 @@ export async function getBodegaStatus() {
     .filter(s => s.tipo === 'PASILLA' && (s.metodoBeneficio === 'LAVADO' || !s.metodoBeneficio))
     .reduce((s, x) => s + x.cantidad, 0)
   const salidaPasillaFermentado = salidas
-    .filter(s => s.tipo === 'PASILLA' && s.metodoBeneficio === 'FERMENTADO')
+    .filter(s => s.tipo === 'SEGUNDAS' || (s.tipo === 'PASILLA' && s.metodoBeneficio === 'FERMENTADO'))
     .reduce((s, x) => s + x.cantidad, 0)
 
   const totalSalidaSeco = salidaSecoLavado + salidaSecoFermentado

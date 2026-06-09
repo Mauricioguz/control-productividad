@@ -12,6 +12,7 @@ export default function BodegaPage() {
   const [status, setStatus] = useState<Status | null>(null);
   const [isPending, startTransition] = useTransition();
   const [editingSalida, setEditingSalida] = useState<Salida | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const loadData = async () => {
     const [salidasData, statusData] = await Promise.all([
@@ -28,33 +29,48 @@ export default function BodegaPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
     const formData = new FormData(e.currentTarget);
     const form = e.currentTarget;
     
     startTransition(async () => {
-      await createSalida(formData);
-      form.reset();
-      await loadData();
+      const res = await createSalida(formData);
+      if (res?.error) {
+        setError(res.error);
+      } else {
+        form.reset();
+        await loadData();
+      }
     });
   };
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!editingSalida) return;
+    setError(null);
     const formData = new FormData(e.currentTarget);
     
     startTransition(async () => {
-      await updateSalida(editingSalida.id, formData);
-      setEditingSalida(null);
-      await loadData();
+      const res = await updateSalida(editingSalida.id, formData);
+      if (res?.error) {
+        setError(res.error);
+      } else {
+        setEditingSalida(null);
+        await loadData();
+      }
     });
   };
 
   const handleDelete = (id: string) => {
     if (!confirm('¿Seguro que deseas eliminar este registro de salida?')) return;
+    setError(null);
     startTransition(async () => {
-      await deleteSalida(id);
-      await loadData();
+      const res = await deleteSalida(id);
+      if (res?.error) {
+        setError(res.error);
+      } else {
+        await loadData();
+      }
     });
   };
 
@@ -67,9 +83,46 @@ export default function BodegaPage() {
     }
   };
 
+  const formatTipo = (tipo: string, metodo?: string | null) => {
+    if (tipo === 'PERGAMINO_SECO') return 'Pergamino Seco';
+    if (tipo === 'SEGUNDAS' || (tipo === 'PASILLA' && metodo === 'FERMENTADO')) return 'Café de Segunda';
+    return 'Pasilla';
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <h1 className="page-title">Inventario de Bodega</h1>
+
+      {error && (
+        <div style={{
+          background: 'rgba(239, 68, 68, 0.15)',
+          border: '1px solid var(--danger)',
+          color: 'var(--danger)',
+          padding: '1rem',
+          borderRadius: 'var(--radius)',
+          fontSize: '0.9rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+          <span>⚠️ {error}</span>
+          <button 
+            type="button" 
+            onClick={() => setError(null)} 
+            style={{ 
+              background: 'transparent', 
+              color: 'var(--danger)', 
+              border: 'none', 
+              padding: '0 0.5rem',
+              fontWeight: 'bold',
+              fontSize: '1.15rem',
+              cursor: 'pointer'
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {/* Resumen de Existencias */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
@@ -131,7 +184,8 @@ export default function BodegaPage() {
               <label>Tipo de Café</label>
               <select name="tipo" required>
                 <option value="PERGAMINO_SECO">Pergamino Seco</option>
-                <option value="PASILLA">Pasilla / Segunda</option>
+                <option value="PASILLA">Pasilla</option>
+                <option value="SEGUNDAS">Café de Segunda</option>
               </select>
             </div>
             <div className="form-group">
@@ -181,7 +235,7 @@ export default function BodegaPage() {
               {salidas.map(s => (
                 <tr key={s.id}>
                   <td>{new Date(s.fecha).toLocaleDateString()}</td>
-                  <td>{s.tipo === 'PERGAMINO_SECO' ? 'Pergamino Seco' : 'Pasilla'}</td>
+                  <td>{formatTipo(s.tipo, s.metodoBeneficio)}</td>
                   <td>{s.metodoBeneficio === 'FERMENTADO' ? 'Fermentado' : 'Lavado'}</td>
                   <td style={{ fontWeight: 700 }}>{s.cantidad} kg</td>
                   <td>{formatDestino(s.destino)}</td>
@@ -212,7 +266,8 @@ export default function BodegaPage() {
               <label>Tipo de Café</label>
               <select name="tipo" required defaultValue={editingSalida.tipo}>
                 <option value="PERGAMINO_SECO">Pergamino Seco</option>
-                <option value="PASILLA">Pasilla / Segunda</option>
+                <option value="PASILLA">Pasilla</option>
+                <option value="SEGUNDAS">Café de Segunda</option>
               </select>
             </div>
             <div className="form-group">
