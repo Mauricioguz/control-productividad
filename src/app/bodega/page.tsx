@@ -220,38 +220,40 @@ export default function BodegaPage() {
         {/* Historial */}
         <div className="glass-card">
           <h2 style={{ marginBottom: '1.5rem' }}>Historial de Salidas</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Tipo</th>
-                <th>Beneficio</th>
-                <th>Cantidad</th>
-                <th>Destino</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {salidas.map(s => (
-                <tr key={s.id}>
-                  <td>{new Date(s.fecha).toLocaleDateString()}</td>
-                  <td>{formatTipo(s.tipo, s.metodoBeneficio)}</td>
-                  <td>{s.metodoBeneficio === 'FERMENTADO' ? 'Fermentado' : 'Lavado'}</td>
-                  <td style={{ fontWeight: 700 }}>{s.cantidad} kg</td>
-                  <td>{formatDestino(s.destino)}</td>
-                  <td className="actions-cell">
-                    <button className="secondary" onClick={() => setEditingSalida(s)}>Editar</button>
-                    <button className="danger" onClick={() => handleDelete(s.id)}>Eliminar</button>
-                  </td>
+          <div style={{ maxHeight: '400px', overflowY: 'auto', overflowX: 'auto', border: '1px solid var(--border)', borderRadius: '8px' }}>
+            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0 }}>
+              <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
+                <tr style={{ backgroundColor: 'var(--surface)' }}>
+                  <th style={{ position: 'sticky', top: 0, backgroundColor: 'var(--surface)', borderBottom: '2px solid var(--border)', zIndex: 11 }}>Fecha</th>
+                  <th style={{ position: 'sticky', top: 0, backgroundColor: 'var(--surface)', borderBottom: '2px solid var(--border)', zIndex: 11 }}>Tipo</th>
+                  <th style={{ position: 'sticky', top: 0, backgroundColor: 'var(--surface)', borderBottom: '2px solid var(--border)', zIndex: 11 }}>Beneficio</th>
+                  <th style={{ position: 'sticky', top: 0, backgroundColor: 'var(--surface)', borderBottom: '2px solid var(--border)', zIndex: 11 }}>Cantidad</th>
+                  <th style={{ position: 'sticky', top: 0, backgroundColor: 'var(--surface)', borderBottom: '2px solid var(--border)', zIndex: 11 }}>Destino</th>
+                  <th style={{ position: 'sticky', top: 0, backgroundColor: 'var(--surface)', borderBottom: '2px solid var(--border)', zIndex: 11 }}>Acciones</th>
                 </tr>
-              ))}
-              {salidas.length === 0 && (
-                <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>No hay registros de salidas.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {salidas.map(s => (
+                  <tr key={s.id}>
+                    <td>{new Date(s.fecha).toLocaleDateString()}</td>
+                    <td>{formatTipo(s.tipo, s.metodoBeneficio)}</td>
+                    <td>{s.metodoBeneficio === 'FERMENTADO' ? 'Fermentado' : 'Lavado'}</td>
+                    <td style={{ fontWeight: 700 }}>{s.cantidad} kg</td>
+                    <td>{formatDestino(s.destino)}</td>
+                    <td className="actions-cell">
+                      <button className="secondary" onClick={() => setEditingSalida(s)}>Editar</button>
+                      <button className="danger" onClick={() => handleDelete(s.id)}>Eliminar</button>
+                    </td>
+                  </tr>
+                ))}
+                {salidas.length === 0 && (
+                  <tr>
+                    <td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>No hay registros de salidas.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
