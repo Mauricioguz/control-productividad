@@ -20,6 +20,8 @@ export async function getDashboardData() {
   const totalSecoFermentado = procesosFermentacion.reduce((s, p) => s + (p.pesoCafeSeco ?? 0), 0)
   const totalSeco = totalSecoLavado + totalSecoFermentado
   const totalTeoricoGlobal = lotes.reduce((s, l) => s + l.numeroArboles * l.rendimientoTeorico, 0)
+  const totalCerezaProcesadaFinca = procesosLavado.reduce((s, p) => s + p.pesoCerezaProcesada, 0) + procesosFermentacion.reduce((s, p) => s + p.pesoCerezaTotal, 0)
+  const rendimientoFincaReal = totalSeco > 0 ? (totalCerezaProcesadaFinca / totalSeco) * 12.5 : 0
 
   // === BI por Lote ===
   const loteBI = lotes.map(lote => {
@@ -46,6 +48,9 @@ export async function getDashboardData() {
     const cerezaTotalProcesada = cerezaLavada + cerezaFermentada
     const teoricoLote = lote.numeroArboles * lote.rendimientoTeorico
     const cumplimiento = teoricoLote > 0 ? (secoTotal / teoricoLote) * 100 : 0
+    const cerezaPorArroba = secoTotal > 0 ? (cerezaTotalProcesada / secoTotal) * 12.5 : 0
+    const pasillaPorArroba = secoTotal > 0 ? (pasillaSeca / secoTotal) * 12.5 : 0
+    const segundasPorArroba = secoTotal > 0 ? (flotesSegunda / secoTotal) * 12.5 : 0
 
     // Rendimientos
     const rendCerezaMojado = cerezaLavada > 0 && mojadoLavado > 0
@@ -73,6 +78,9 @@ export async function getDashboardData() {
       rendCerezaMojado: parseFloat(rendCerezaMojado.toFixed(1)),
       rendMojadoSeco: parseFloat(rendMojadoSeco.toFixed(1)),
       rendCerezaSecoFer: parseFloat(rendCerezaSecoFer.toFixed(1)),
+      cerezaPorArroba: parseFloat(cerezaPorArroba.toFixed(1)),
+      pasillaPorArroba: parseFloat(pasillaPorArroba.toFixed(1)),
+      segundasPorArroba: parseFloat(segundasPorArroba.toFixed(1)),
     }
   })
 
@@ -98,6 +106,7 @@ export async function getDashboardData() {
         totalSeco: parseFloat(totalSeco.toFixed(1)),
         totalTeoricoGlobal: parseFloat(totalTeoricoGlobal.toFixed(1)),
         cumplimientoGlobal: totalTeoricoGlobal > 0 ? parseFloat(((totalSeco / totalTeoricoGlobal) * 100).toFixed(1)) : 0,
+        rendimientoFincaReal: parseFloat(rendimientoFincaReal.toFixed(1)),
         recolectoresActivos: recolectores.length,
         totalLotes: lotes.length,
       },

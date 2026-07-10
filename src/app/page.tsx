@@ -14,7 +14,7 @@ import {
 
 type DashboardData = Awaited<ReturnType<typeof getDashboardData>>;
 
-function KpiCard({ title, value, unit, color }: { title: string; value: string | number; unit?: string; color?: string }) {
+function KpiCard({ title, value, unit, color, footer }: { title: string; value: string | number; unit?: string; color?: string; footer?: string }) {
   return (
     <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
       <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -23,6 +23,7 @@ function KpiCard({ title, value, unit, color }: { title: string; value: string |
       <span style={{ fontSize: '2rem', fontWeight: 800, color: color ?? 'var(--primary)' }}>
         {value}<span style={{ fontSize: '1rem', fontWeight: 400, marginLeft: '4px', color: 'var(--text-muted)' }}>{unit}</span>
       </span>
+      {footer && <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>{footer}</span>}
     </div>
   );
 }
@@ -88,6 +89,7 @@ export default function DashboardPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '1rem' }}>
           <KpiCard title="Cereza Recolectada" value={kpis.totalCerezaRecolectada.toLocaleString()} unit="kg" />
           <KpiCard title="Pergamino Seco Total" value={kpis.totalSeco.toLocaleString()} unit="kg" color="#38bdf8" />
+          <KpiCard title="Rendimiento Finca" value={kpis.rendimientoFincaReal > 0 ? kpis.rendimientoFincaReal.toLocaleString() : '—'} unit=" kg" color="#eab308" footer="cereza / @ seco (Teórico: 60)" />
           <KpiCard title="Potencial Teórico" value={kpis.totalTeoricoGlobal.toLocaleString()} unit="kg" color="#6366f1" />
           <KpiCard title="Cumplimiento Global" value={kpis.cumplimientoGlobal} unit="%" color={cumplColor} />
           <KpiCard title="Recolectores Activos" value={kpis.recolectoresActivos} color="#ec4899" />
@@ -122,8 +124,8 @@ export default function DashboardPage() {
       {/* Rendimientos y Pasillas */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
         <div className="glass-card">
-          <SectionTitle title="Rendimientos de Beneficio por Lote" subtitle="% de conversión en cada etapa del proceso" />
-          {loteBI.some(l => l.rendCerezaMojado > 0 || l.rendCerezaSecoFer > 0) ? <RendimientosChart data={loteBI} /> : <EmptyChart />}
+          <SectionTitle title="Rendimiento de Conversión por Lote" subtitle="Kg de cereza necesarios para obtener 1 arroba (12.5 kg) de café seco" />
+          {loteBI.some(l => l.secoTotal > 0 && l.cerezaTotalProcesada > 0) ? <RendimientosChart data={loteBI} /> : <EmptyChart />}
         </div>
         <div className="glass-card">
           <SectionTitle title="Control de Pasillas y Café de Segunda" subtitle="Subproductos por lote" />
@@ -198,11 +200,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Rendimientos del lote */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
-                <RendimientoBar label="Cereza → Mojado" value={selectedLote.rendCerezaMojado} color="#38bdf8" />
-                <RendimientoBar label="Mojado → Seco" value={selectedLote.rendMojadoSeco} color="#4ade80" />
-                <RendimientoBar label="Cereza → Seco (Fer.)" value={selectedLote.rendCerezaSecoFer} color="#ec4899" />
-              </div>
+              <RendimientoKilosBar realValue={selectedLote.cerezaPorArroba} />
 
               {/* Cumplimiento visual */}
               <div>
@@ -283,6 +281,58 @@ function RendimientoBar({ label, value, color }: { label: string; value: number;
       </div>
       <div style={{ background: 'var(--border)', borderRadius: '4px', height: '8px', overflow: 'hidden' }}>
         <div style={{ width: `${Math.min(value, 100)}%`, height: '100%', background: color, transition: 'width 0.6s ease', borderRadius: '4px' }} />
+      </div>
+    </div>
+  );
+}
+
+function RendimientoKilosBar({ realValue }: { realValue: number }) {
+  if (!realValue || realValue === 0) {
+    return (
+      <div style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.2)', borderRadius: '8px', textAlign: 'center', color: 'var(--text-muted)' }}>
+        Sin datos de rendimiento para este lote (requiere procesos con peso seco y cereza)
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.2)', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-main)' }}>
+        Rendimiento de Conversión (Cereza necesaria para obtener 1 Arroba de Café Seco)
+      </div>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        {/* Real */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Rendimiento Real</span>
+            <span style={{ fontWeight: 800, color: realValue <= 60 ? '#4ade80' : '#f59e0b' }}>
+              {realValue.toLocaleString()} kg cereza / @
+            </span>
+          </div>
+          <div style={{ background: 'var(--border)', borderRadius: '4px', height: '8px', overflow: 'hidden' }}>
+            <div style={{ width: `${Math.min((realValue / 120) * 100, 100)}%`, height: '100%', background: realValue <= 60 ? '#4ade80' : '#f59e0b', borderRadius: '4px' }} />
+          </div>
+        </div>
+
+        {/* Teórico */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Rendimiento Teórico</span>
+            <span style={{ fontWeight: 800, color: '#6366f1' }}>
+              60 kg cereza / @
+            </span>
+          </div>
+          <div style={{ background: 'var(--border)', borderRadius: '4px', height: '8px', overflow: 'hidden' }}>
+            <div style={{ width: `${(60 / 120) * 100}%`, height: '100%', background: '#6366f1', borderRadius: '4px' }} />
+          </div>
+        </div>
+      </div>
+      
+      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'right' }}>
+        {realValue <= 60 
+          ? `¡Eficiente! Necesitaste ${(60 - realValue).toFixed(1)} kg menos de cereza que el promedio teórico para producir una arroba.`
+          : `Requiere ${(realValue - 60).toFixed(1)} kg más de cereza que el promedio teórico para producir una arroba.`}
       </div>
     </div>
   );

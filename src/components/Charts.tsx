@@ -22,6 +22,10 @@ type LoteBI = {
   pasillaMojada: number;
   pasillaSeca: number;
   flotesSegunda: number;
+  cerezaPorArroba: number;
+  cerezaTotalProcesada: number;
+  pasillaPorArroba: number;
+  segundasPorArroba: number;
 };
 
 const tooltipStyle = {
@@ -82,11 +86,10 @@ export function CumplimientoChart({ data }: { data: LoteBI[] }) {
 }
 
 export function RendimientosChart({ data }: { data: LoteBI[] }) {
-  const chartData = data.filter(l => l.rendCerezaMojado > 0 || l.rendCerezaSecoFer > 0).map(l => ({
+  const chartData = data.filter(l => l.secoTotal > 0 && l.cerezaTotalProcesada > 0).map(l => ({
     nombre: l.nombre.length > 12 ? l.nombre.slice(0, 12) + '…' : l.nombre,
-    'Cereza→Mojado': l.rendCerezaMojado,
-    'Mojado→Seco': l.rendMojadoSeco,
-    'Cereza→Seco (Fer.)': l.rendCerezaSecoFer,
+    'Real': l.cerezaPorArroba,
+    'Teórico': 60,
   }));
 
   return (
@@ -94,12 +97,11 @@ export function RendimientosChart({ data }: { data: LoteBI[] }) {
       <BarChart data={chartData} barCategoryGap="20%">
         <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
         <XAxis dataKey="nombre" tick={{ fill: '#94a3b8', fontSize: 12 }} />
-        <YAxis tick={{ fill: '#94a3b8', fontSize: 12 }} unit="%" />
-        <Tooltip contentStyle={tooltipStyle} />
+        <YAxis tick={{ fill: '#94a3b8', fontSize: 12 }} unit=" kg" />
+        <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `${v} kg`} />
         <Legend wrapperStyle={{ color: '#94a3b8' }} />
-        <Bar dataKey="Cereza→Mojado" fill="#38bdf8" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="Mojado→Seco" fill="#4ade80" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="Cereza→Seco (Fer.)" fill="#ec4899" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="Teórico" fill="#6366f1" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="Real" fill="#ec4899" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -193,11 +195,12 @@ export function ProduccionPieChart({ data }: { data: LoteBI[] }) {
 }
 
 export function RadarRendimientosChart({ data }: { data: LoteBI[] }) {
+  const activeData = data.filter(l => l.secoTotal > 0);
   const radarData = [
-    { metric: 'Cereza→Mojado', ...Object.fromEntries(data.map(l => [l.nombre.slice(0, 10), l.rendCerezaMojado])) },
-    { metric: 'Mojado→Seco', ...Object.fromEntries(data.map(l => [l.nombre.slice(0, 10), l.rendMojadoSeco])) },
-    { metric: 'Cumplimiento', ...Object.fromEntries(data.map(l => [l.nombre.slice(0, 10), l.cumplimiento])) },
-    { metric: 'Rend.Fer.', ...Object.fromEntries(data.map(l => [l.nombre.slice(0, 10), l.rendCerezaSecoFer])) },
+    { metric: 'Cereza / @ (kg)', ...Object.fromEntries(activeData.map(l => [l.nombre.slice(0, 10), l.cerezaPorArroba])) },
+    { metric: 'Pasilla / @ (kg)', ...Object.fromEntries(activeData.map(l => [l.nombre.slice(0, 10), l.pasillaPorArroba])) },
+    { metric: 'Segundas / @ (kg)', ...Object.fromEntries(activeData.map(l => [l.nombre.slice(0, 10), l.segundasPorArroba])) },
+    { metric: 'Cumplimiento (%)', ...Object.fromEntries(activeData.map(l => [l.nombre.slice(0, 10), l.cumplimiento])) },
   ];
 
   return (
@@ -206,7 +209,7 @@ export function RadarRendimientosChart({ data }: { data: LoteBI[] }) {
         <PolarGrid stroke="#334155" />
         <PolarAngleAxis dataKey="metric" tick={{ fill: '#94a3b8', fontSize: 12 }} />
         <PolarRadiusAxis domain={[0, 100]} tick={{ fill: '#94a3b8', fontSize: 10 }} />
-        {data.slice(0, 5).map((l, i) => (
+        {activeData.slice(0, 5).map((l, i) => (
           <Radar
             key={l.nombre}
             name={l.nombre}
@@ -217,7 +220,11 @@ export function RadarRendimientosChart({ data }: { data: LoteBI[] }) {
           />
         ))}
         <Legend wrapperStyle={{ color: '#94a3b8' }} />
-        <Tooltip contentStyle={tooltipStyle} />
+        <Tooltip contentStyle={tooltipStyle} formatter={(value: any, name: any, props: any) => {
+          const metricName = props.payload.metric;
+          if (metricName.includes('%')) return `${value}%`;
+          return `${value} kg`;
+        }} />
       </RadarChart>
     </ResponsiveContainer>
   );
