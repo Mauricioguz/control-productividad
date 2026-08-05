@@ -93,12 +93,22 @@ export async function getDashboardData() {
   }).filter(r => r.cereza > 0)
 
   // === Evolución de Recolección por Mes ===
-  const porMes: Record<string, number> = {}
+  const porMes: Record<string, { label: string; cereza: number }> = {}
   recolecciones.forEach(r => {
-    const mes = new Date(r.fecha).toLocaleDateString('es', { month: 'short', year: 'numeric' })
-    porMes[mes] = (porMes[mes] ?? 0) + r.pesoCereza
+    const date = new Date(r.fecha)
+    const year = date.getFullYear()
+    const month = date.getMonth()
+    const key = `${year}-${String(month + 1).padStart(2, '0')}`
+    
+    if (!porMes[key]) {
+      const label = date.toLocaleDateString('es', { month: 'short', year: 'numeric' })
+      porMes[key] = { label, cereza: 0 }
+    }
+    porMes[key].cereza += r.pesoCereza
   })
-  const evolucionMensual = Object.entries(porMes).map(([mes, cereza]) => ({ mes, cereza }))
+  const evolucionMensual = Object.entries(porMes)
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([_, val]) => ({ mes: val.label, cereza: val.cereza }))
 
     return {
       kpis: {
