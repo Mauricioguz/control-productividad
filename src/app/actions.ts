@@ -1,5 +1,6 @@
 'use server'
 
+// Acciones del servidor para procesamiento de BI y KPI del dashboard
 import leonoraDb from '@/lib/leonora-core'
 
 export async function getDashboardData() {
