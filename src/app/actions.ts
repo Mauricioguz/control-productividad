@@ -21,8 +21,13 @@ export async function getDashboardData() {
   const totalSecoFermentado = procesosFermentacion.reduce((s, p) => s + (p.pesoCafeSeco ?? 0), 0)
   const totalSeco = totalSecoLavado + totalSecoFermentado
   const totalTeoricoGlobal = lotes.reduce((s, l) => s + l.numeroArboles * l.rendimientoTeorico, 0)
-  const totalCerezaProcesadaFinca = procesosLavado.reduce((s, p) => s + p.pesoCerezaProcesada, 0) + procesosFermentacion.reduce((s, p) => s + p.pesoCerezaTotal, 0)
-  const rendimientoFincaReal = totalSeco > 0 ? (totalCerezaProcesadaFinca / totalSeco) * 12.5 : 0
+  const totalCerezaProcesadaFincaCompletados = procesosLavado
+    .filter(p => p.pesoCafeSeco !== null)
+    .reduce((s, p) => s + p.pesoCerezaProcesada, 0) + 
+    procesosFermentacion
+    .filter(p => p.pesoCafeSeco !== null)
+    .reduce((s, p) => s + p.pesoCerezaTotal, 0)
+  const rendimientoFincaReal = totalSeco > 0 ? (totalCerezaProcesadaFincaCompletados / totalSeco) * 12.5 : 0
 
   // === BI por Lote ===
   const loteBI = lotes.map(lote => {
@@ -49,17 +54,45 @@ export async function getDashboardData() {
     const cerezaTotalProcesada = cerezaLavada + cerezaFermentada
     const teoricoLote = lote.numeroArboles * lote.rendimientoTeorico
     const cumplimiento = teoricoLote > 0 ? (secoTotal / teoricoLote) * 100 : 0
-    const cerezaPorArroba = secoTotal > 0 ? (cerezaTotalProcesada / secoTotal) * 12.5 : 0
-    const pasillaPorArroba = secoTotal > 0 ? (pasillaSeca / secoTotal) * 12.5 : 0
-    const segundasPorArroba = secoTotal > 0 ? (flotesSegunda / secoTotal) * 12.5 : 0
 
-    // Rendimientos
-    const rendCerezaMojado = cerezaLavada > 0 && mojadoLavado > 0
-      ? ((mojadoLavado / cerezaLavada) * 100) : 0
-    const rendMojadoSeco = mojadoLavado > 0 && secoLavado > 0
-      ? ((secoLavado / mojadoLavado) * 100) : 0
-    const rendCerezaSecoFer = cerezaFermentada > 0 && secoFermentado > 0
-      ? ((secoFermentado / cerezaFermentada) * 100) : 0
+    // Filtrar únicamente los procesos completados (peso seco no nulo) para cálculos de rendimiento por arroba
+    const cerezaLavadaCompletados = lavadoData
+      .filter(p => p.pesoCafeSeco !== null)
+      .reduce((s, p) => s + p.pesoCerezaProcesada, 0)
+    const cerezaFermentadaCompletados = ferData
+      .filter(p => p.pesoCafeSeco !== null)
+      .reduce((s, p) => s + p.pesoCerezaTotal, 0)
+    const cerezaTotalProcesadaCompletados = cerezaLavadaCompletados + cerezaFermentadaCompletados
+
+    const pasillaSecaCompletados = lavadoData
+      .filter(p => p.pesoCafeSeco !== null)
+      .reduce((s, p) => s + (p.pesoPasillaSeca ?? 0), 0)
+    const flotesSegundaCompletados = ferData
+      .filter(p => p.pesoCafeSeco !== null)
+      .reduce((s, p) => s + (p.pesoFlotesSegunda ?? 0), 0)
+
+    const cerezaPorArroba = secoTotal > 0 ? (cerezaTotalProcesadaCompletados / secoTotal) * 12.5 : 0
+    const pasillaPorArroba = secoTotal > 0 ? (pasillaSecaCompletados / secoTotal) * 12.5 : 0
+    const segundasPorArroba = secoTotal > 0 ? (flotesSegundaCompletados / secoTotal) * 12.5 : 0
+
+    // Rendimientos en porcentaje calculados con consistencia
+    const lavadoConMojado = lavadoData.filter(p => p.pesoCafeMojado !== null)
+    const mojadoLavadoValidos = lavadoConMojado.reduce((s, p) => s + (p.pesoCafeMojado ?? 0), 0)
+    const cerezaLavadaConMojado = lavadoConMojado.reduce((s, p) => s + p.pesoCerezaProcesada, 0)
+    const rendCerezaMojado = cerezaLavadaConMojado > 0 && mojadoLavadoValidos > 0
+      ? ((mojadoLavadoValidos / cerezaLavadaConMojado) * 100) : 0
+
+    const lavadoConSeco = lavadoData.filter(p => p.pesoCafeSeco !== null && p.pesoCafeMojado !== null)
+    const secoLavadoValidos = lavadoConSeco.reduce((s, p) => s + (p.pesoCafeSeco ?? 0), 0)
+    const mojadoLavadoValidosSeco = lavadoConSeco.reduce((s, p) => s + (p.pesoCafeMojado ?? 0), 0)
+    const rendMojadoSeco = mojadoLavadoValidosSeco > 0 && secoLavadoValidos > 0
+      ? ((secoLavadoValidos / mojadoLavadoValidosSeco) * 100) : 0
+
+    const ferConSeco = ferData.filter(p => p.pesoCafeSeco !== null)
+    const secoFermentadoValidos = ferConSeco.reduce((s, p) => s + (p.pesoCafeSeco ?? 0), 0)
+    const cerezaFermentadaValidos = ferConSeco.reduce((s, p) => s + p.pesoCerezaTotal, 0)
+    const rendCerezaSecoFer = cerezaFermentadaValidos > 0 && secoFermentadoValidos > 0
+      ? ((secoFermentadoValidos / cerezaFermentadaValidos) * 100) : 0
 
     return {
       id: lote.id,
