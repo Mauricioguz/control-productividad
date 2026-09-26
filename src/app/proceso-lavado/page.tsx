@@ -121,7 +121,9 @@ export default function ProcesoLavadoPage() {
                 <th>Lote</th>
                 <th>Cereza (kg)</th>
                 <th>Mojado (kg)</th>
+                <th>Pasilla Mojada (kg)</th>
                 <th>Seco (kg)</th>
+                <th>Pasilla Seca (kg)</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -130,9 +132,11 @@ export default function ProcesoLavadoPage() {
                 <tr key={p.id}>
                   <td>{new Date(p.fecha).toLocaleDateString()}</td>
                   <td>{p.lote.nombre}</td>
-                  <td>{p.pesoCerezaProcesada}</td>
-                  <td>{p.pesoCafeMojado || '-'}</td>
-                  <td style={{ fontWeight: 'bold' }}>{p.pesoCafeSeco || '-'}</td>
+                  <td>{p.pesoCerezaProcesada} kg</td>
+                  <td>{p.pesoCafeMojado ? `${p.pesoCafeMojado} kg` : '-'}</td>
+                  <td style={{ color: '#f59e0b' }}>{p.pesoPasillaMojada ? `${p.pesoPasillaMojada} kg` : '-'}</td>
+                  <td style={{ fontWeight: 'bold' }}>{p.pesoCafeSeco ? `${p.pesoCafeSeco} kg` : '-'}</td>
+                  <td style={{ fontWeight: 'bold', color: '#fb923c' }}>{p.pesoPasillaSeca ? `${p.pesoPasillaSeca} kg` : '-'}</td>
                   <td className="actions-cell">
                     <button className="secondary" onClick={() => setEditingProceso(p)}>Editar</button>
                     <button className="danger" onClick={() => handleDelete(p.id)} disabled={isPending}>Eliminar</button>
@@ -140,7 +144,7 @@ export default function ProcesoLavadoPage() {
                 </tr>
               ))}
               {procesos.length === 0 && (
-                <tr><td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>No hay registros.</td></tr>
+                <tr><td colSpan={8} style={{ textAlign: 'center', padding: '2rem' }}>No hay registros.</td></tr>
               )}
             </tbody>
           </table>
